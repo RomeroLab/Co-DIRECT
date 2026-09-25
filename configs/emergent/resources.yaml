@@ -1,0 +1,47 @@
+# The approved resource contract for the emergent-leadership experiment.
+#
+# Loaded by `dive.emergent_contract.EmergentContract.from_yaml`, which rejects
+# unknown sections, per-family checkpoint overrides, the v1 graph, an
+# uncontemplated LoRA rank, more than four GPUs, and an evidence root on
+# purgeable storage. Editing a value here without editing the rule that permits
+# it therefore fails at startup rather than at analysis.
+#
+# Design: docs/superpowers/specs/2026-08-19-dive-emergent-leadership-design.md
+# Plan:   docs/superpowers/plans/2026-08-19-dive-emergent-leadership-implementation.md
+
+upstream:
+  # NOT the signed-value pin. Two Proteina-Complexa checkouts are live at once,
+  # each owned by one subsystem -- see `dive/signed_value/roots.py`. This one is
+  # required for the architecture-v2 path, `_splice_pretrained_weights`, and
+  # `replace_lora_layers`.
+  root: ${PROTEINA_COMPLEXA_ROOT}
+  commit: 32b71ae1d9a8767414eae3921cf35969430db82f
+
+checkpoints:
+  # One common checkpoint for binder, AME, and antibody. The loader refuses any
+  # additional key here, and also refuses `complexa_ame.ckpt` /
+  # `complexa_ligand.ckpt` by name -- both sit in this same directory, so naming
+  # one is a one-character mistake that silently produces per-family training.
+  common: ${PROTEINA_COMPLEXA_ROOT}/ckpts/complexa.ckpt
+  autoencoder: ${PROTEINA_COMPLEXA_ROOT}/ckpts/complexa_ae.ckpt
+
+model:
+  architecture_v2: true
+  # Rank 16 is contemplated but not authorized: `assert_current` pins 8 until the
+  # rank-8 training-health gate passes and this file's amendment records it.
+  lora_rank: 8
+
+compute:
+  # coltrane holds 8 L40S and they are usually all idle. The policy is at most 4
+  # at once. `MAX_GPU_COUNT` is a ceiling, so raising this requires arguing with
+  # the stated reason rather than editing one integer.
+  gpu_count: 4
+
+roots:
+  evidence: runs/cache
+  bulk: ${CODIRECT_STRUCTURE_ROOT}
+
+backup:
+  # Architecture C may not be started after this date. A late Gate 2 failure
+  # narrows the paper claim; it does not begin a new architecture.
+  deadline: 2026-08-27
