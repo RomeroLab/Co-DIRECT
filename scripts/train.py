@@ -65,10 +65,11 @@ def main() -> int:
                          "both=S19/S25; ca=site geometry only (sequence stays "
                          "on ordinary FM); lat=site latents only")
     ap.add_argument("--contact-nm", type=float, default=0.5)
-    ap.add_argument("--steps", type=int, default=500)
+    ap.add_argument("--steps", type=int, default=800)
     ap.add_argument("--batch-size", type=int, default=2)
     ap.add_argument("--accumulate", type=int, default=4)
-    ap.add_argument("--lr", type=float, default=1e-6)
+    ap.add_argument("--lr", type=float, default=1e-5,
+                    help="AdamW learning rate for trainable trunk (model.nn) parameters")
     ap.add_argument("--weight-decay", type=float, default=0.0)
     ap.add_argument("--warmup", type=int, default=50)
     ap.add_argument("--grad-clip", type=float, default=1.0)

@@ -86,7 +86,7 @@ python scripts/train.py \
   --train-router --condition-live-router --router-on-self-cond \
   --router-no-residue-type \
   --snap-anticipation --lambda-router 1 --router-lr 1e-3 \
-  --steps 400 --batch-size 1 --accumulate 8 --lr 1e-6 \
+  --steps 800 --batch-size 1 --accumulate 8 --lr 1e-5 \
   --device cuda:0 \
   --out runs/train-out
 ```
@@ -102,8 +102,8 @@ first:
 PYTHONPATH=src python - <<'PY'
 from pathlib import Path
 from dive.stackelberg.trunk_io import wrap_for_paper_generate
-src = Path("runs/train-out/trunk_step400.pt")
-wrap_for_paper_generate(src, src.with_name("trunk_step400.paper.pt"))
+src = Path("runs/train-out/trunk_step800.pt")
+wrap_for_paper_generate(src, src.with_name("trunk_step800.paper.pt"))
 PY
 ```
 
@@ -116,8 +116,8 @@ external directory of task lists and structures.
 ```bash
 python scripts/generate.py \
   --family ame --arm lora --gpu 0 --candidates 3 --ame-specialist \
-  --trunk runs/train-out/trunk_step400.paper.pt \
-  --learned-router runs/train-out/router_step400.pt \
+  --trunk runs/train-out/trunk_step800.paper.pt \
+  --learned-router runs/train-out/router_step800.pt \
   --anticipate --snap-anticipation \
   --condition-router --router-on-self-cond \
   --alpha 1.0 --alpha-latent 1.0 \
@@ -127,5 +127,3 @@ python scripts/generate.py \
 `--nsteps 2` shortens diffusion for a load check. Omit it for the 400-step
 protocol. The saved router must have `use_residue_type: false` and
 `use_trunk_condition: false`.
-
-
